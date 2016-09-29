@@ -33,7 +33,6 @@ def collect_events(fn, conf_id) :
 	cmd = cmd.replace(')','\)')
 
 	regs=r'^\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+).*('+cmd+').*$'
-	print regs
 	f=open(fn)
 	for line in f:
 		m=re.match(regs,line)
@@ -48,7 +47,7 @@ def collect_events(fn, conf_id) :
 	return ret
 
 
-def generate_seqdiag(fontfile, fn , conf_id) :
+def generate_seqdiag(fn , conf_id) :
 
 	f = open ( 'output.diag', 'w' )
 	if f is not None :
@@ -59,16 +58,25 @@ def generate_seqdiag(fontfile, fn , conf_id) :
 		f.write('activation = none;')
 		f.write('autonumber = True;')
 		f.write('default_note_color = lightblue;')
+		print 'generate the events ....'
 		ret = collect_events(fn, conf_id)
+		print 'generate the events done!'
 		for i in range(0, len(ret)):
 			f.write ( ret[i])
 		f.write('}')
 		f.close()
-
-		cmd = 'seqdiag -f '+fontfile+' output.diag'
+		
+		print 'generate the sequence diagram ...'
+		cmd = 'seqdiag -f ./ciscoreg.ttf output.diag'
 		os.system(cmd)
+		print 'generate the sequence diagram done!'
 
 
-generate_seqdiag('/Users/weifshen/andrew/ciscoreg.ttf','/Users/weifshen/andrew/wbxtpgw-1_info_09272016_3.14503.log', '2526716586')
+if len(sys.argv) < 3:
+        print "Usage: python ", sys.argv[0], " log_file confid"
+        quit()
+
+
+generate_seqdiag(sys.argv[1], sys.argv[2])
 
 
