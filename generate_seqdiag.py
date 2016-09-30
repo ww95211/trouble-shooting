@@ -50,7 +50,10 @@ def collect_events(fn, conf_id) :
 			for i in range(2, len(m.groups())) :
 				if len(m.group(i + 1)) > 0:
 					msg = msg + ',' + excape_reserve_keyword(m.group(i + 1))
-			msg = msg + ')"]'
+			msg = msg + ')"'
+			if 'color' in obj:
+				msg = msg + ',color="'+obj['color']+'"'
+			msg = msg + ']'
 			if 'ext-call' in obj:
 				msg = msg + '{' + obj['ext-call'] + ' [label="' +  obj['label'] + '(' + m.group(1) + ')"];}'
 			msg = msg + ';\n'

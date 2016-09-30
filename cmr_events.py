@@ -3,7 +3,7 @@ __author__ = 'weifshen'
 
 _events = {
 	'conference-events' : {
-		'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference'},
+		'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference', 'color':'blue'},
 		'OnCreateJoinMeetingConfirm [PETA],uRoomId=' : {'call':'CB -> TPGW','label':'conf created'},
 		'callbackURL=' : {'call':'Hecate -> TPGW','label':'join conf'},
 		'OnMeetingClosedIndication [PETA],uRoomId' : {'call':'CB -> TPGW','label':'conf closed'},
