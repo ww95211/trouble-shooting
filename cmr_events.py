@@ -14,6 +14,8 @@ _events = {
 		'OnRemoveEndpointRequest [PETA],userId=' : {'call':'Hecate -> TPGW','label':'user leave'},
 		'LeaveMeeting,m_iStatus=8' : {'call':'TPGW -> CB','label':'user leave'},
 		#'OnSetMuteStatusRequest [PETA],userId=' : {'call':'Hecate -> TPGW','label':'mute user','ext-call':'TPGW -> CB'},
+		'OnHostChangedIndication,uNewHostId=' : {'call':'CB -> TPGW','label':'Host changed'},
+		'1:: OnPresenterChangedIndication' : {'call':'CB -> TPGW','label':'Presenter changed'},
 	},
 	'session-events' : {
 		'OnSessionCreatedIndication:4,' : {'call':'CB -> TPGW','label':'session created'},
