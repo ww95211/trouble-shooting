@@ -3,11 +3,11 @@ __author__ = 'weifshen'
 
 _events = {
 	'conference-events' : {
-	    'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference'},
-	    'OnCreateJoinMeetingConfirm [PETA],uRoomId=' : {'call':'CB -> TPGW','label':'conf created'},
+		'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference'},
+		'OnCreateJoinMeetingConfirm [PETA],uRoomId=' : {'call':'CB -> TPGW','label':'conf created'},
 		'callbackURL=https' : {'call':'Hecate -> TPGW','label':'join conf'},
-	    'OnMeetingClosedIndication [PETA],uRoomId' : {'call':'CB -> TPGW','label':'conf closed'},
-	    'LeaveMeeting,m_iStatus=3' : {'call':'TPGW -> CB','label':'leave conference'},
+		'OnMeetingClosedIndication [PETA],uRoomId' : {'call':'CB -> TPGW','label':'conf closed'},
+		'LeaveMeeting,m_iStatus=3' : {'call':'TPGW -> CB','label':'leave conference'},
 		#'OnUserEjected [PETA],roomId=' : {'call':'CB -> TPGW','label':'eject user','ext-call':'TPGW -> Hecate'},
 		'OnAddEndpointRequest,userid=' : {'call':'Hecate -> TPGW','label':'user join','ext-call':'TPGW -> CB'},
 		'OnCreateJoinMeetingConfirm [PETA],err=' : {'call':'CB -> TPGW','label':'user joined'},
