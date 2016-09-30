@@ -16,6 +16,17 @@ def find_event(events, key) :
 			return cmr_events._events[e][key]
 	return None
 
+def excape_reserve_keyword(str):
+	str = str.replace('[','\[')
+	str = str.replace(']','\]')
+	str = str.replace('(','\(')
+	str = str.replace(')','\)')
+	str = str.replace('{','\{')
+	str = str.replace('}','\}')
+	str = str.replace('\\"','\"')
+	str = str.replace('\"','\\"')
+	return str
+
 def collect_events(fn, conf_id) :
 	ret = []
 	cmd = ''
@@ -27,10 +38,7 @@ def collect_events(fn, conf_id) :
 			else:
 				cmd =  e1
 				first = False
-	cmd = cmd.replace('[','\[')
-	cmd = cmd.replace(']','\]')
-	cmd = cmd.replace('(','\(')
-	cmd = cmd.replace(')','\)')
+	cmd = excape_reserve_keyword(cmd)
 
 	regs=r'^\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+).*'+conf_id+'.*('+cmd+')(.*)$'
 	f=open(fn)
@@ -41,11 +49,11 @@ def collect_events(fn, conf_id) :
 			msg = obj['call'] + ' [label="' +  obj['label'] + '(' + m.group(1)
 			for i in range(2, len(m.groups())) :
 				if len(m.group(i + 1)) > 0:
-					msg = msg + ',' + m.group(i + 1)
+					msg = msg + ',' + excape_reserve_keyword(m.group(i + 1))
 			msg = msg + ')"]'
 			if 'ext-call' in obj:
 				msg = msg + '{' + obj['ext-call'] + ' [label="' +  obj['label'] + '(' + m.group(1) + ')"];}'
-			msg = msg + ';'
+			msg = msg + ';\n'
 			ret.append(msg)
 	f.close()
 	return ret
@@ -53,25 +61,25 @@ def collect_events(fn, conf_id) :
 
 def generate_seqdiag(fn , conf_id) :
 
-	f = open ( 'callflow-'+conf_id+'.diag', 'w' )
+	f = open ( 'callflow-CONF'+conf_id+'.diag', 'w' )
 	if f is not None :
-		f.write('{')
-		f.write('edge_length = 300;')
-		f.write('span_height = 80;')
-		f.write('default_fontsize = 16;')
-		f.write('activation = none;')
-		f.write('autonumber = True;')
-		f.write('default_note_color = lightblue;')
+		f.write('{\n')
+		f.write('edge_length = 300;\n')
+		f.write('span_height = 80;\n')
+		f.write('default_fontsize = 16;\n')
+		f.write('activation = none;\n')
+		f.write('autonumber = True;\n')
+		f.write('default_note_color = lightblue;\n')
 		print 'generate the events ....'
 		ret = collect_events(fn, conf_id)
 		print 'generate the events done!'
 		for i in range(0, len(ret)):
 			f.write ( ret[i])
-		f.write('}')
+		f.write('}\n')
 		f.close()
 		
 		print 'generate the sequence diagram ...'
-		cmd = 'seqdiag -f ./ciscoreg.ttf callflow-'+conf_id+'.diag'
+		cmd = 'seqdiag -f ./ciscoreg.ttf callflow-CONF'+conf_id+'.diag'
 		os.system(cmd)
 		print 'generate the sequence diagram done!'
 
