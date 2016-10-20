@@ -3,9 +3,9 @@ __author__ = 'weifshen'
 
 _events = {
 	'conference-events' : {
-		'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference', 'color':'blue'},
-		'OnCreateJoinMeetingConfirm [PETA],uRoomId=' : {'call':'CB -> TPGW','label':'conf created'},
-		'callbackURL=' : {'call':'Hecate -> TPGW','label':'join conf'},
+		'CreateMeeting,' : {'call':'TPGW -> CB','label':'creating conference', 'level':'debug'},# level:normal|warning|error|debug
+		'OnCreateJoinMeetingConfirm [PETA],uRoomId=' : {'call':'CB -> TPGW','label':'conf created', 'level':'warning'},
+		'callbackURL=' : {'call':'Hecate -> TPGW','label':'join conf','level':'error'},
 		'OnMeetingClosedIndication [PETA],uRoomId' : {'call':'CB -> TPGW','label':'conf closed'},
 		'LeaveMeeting,m_iStatus=3' : {'call':'TPGW -> CB','label':'leave conference'},
 		#'OnUserEjected [PETA],roomId=' : {'call':'CB -> TPGW','label':'eject user','ext-call':'TPGW -> Hecate'},
@@ -20,8 +20,8 @@ _events = {
 		'NotifyWebexUserLeave, WEBEX_TRACKINGID=' : {'call':'CB -> TPGW','label':'WebEx user leave','ext-call':'TPGW -> Hecate'},
 	},
 	'session-events' : {
-		'OnSessionCreatedIndication:4,' : {'call':'CB -> TPGW','label':'session created'},
-		'OnSessionClosedIndication,AS' : {'call':'CB -> TPGW','label':'session closed'},
+		'OnSessionCreatedIndication:4,' : {'call':'CB -> TPGW','label':'session created', 'separator-line':'before'},
+		'OnSessionClosedIndication,AS' : {'call':'CB -> TPGW','label':'session closed', 'separator-line':'after'},
 	},
 	'media-events' : {
 		'HandleDataFromSpark, receive key frame' : {'call':'Linus -> TPGW','label':'key frame','ext-call':'TPGW -> WebEx-client'},

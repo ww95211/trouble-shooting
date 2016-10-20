@@ -27,6 +27,12 @@ def excape_reserve_keyword(str):
 	str = str.replace('\"','\\"')
 	return str
 
+def get_color_from_log_level(level) :
+	levels = {'normal':'black','warning':'orange', 'error':'red', 'debug':'blue'}
+	if level in levels:
+		return levels[level]
+	return 'black'
+
 def collect_events(fn, conf_id) :
 	ret = []
 	cmd = ''
@@ -46,18 +52,28 @@ def collect_events(fn, conf_id) :
 		m=re.match(regs,line)
 		if (m is not None):
 			obj = find_event(cmr_events._events,m.group(2))
-			msg = obj['call'] + ' [label="' +  obj['label'] + '(' + m.group(1)
-			for i in range(2, len(m.groups())) :
-				if len(m.group(i + 1)) > 0:
-					msg = msg + ',' + excape_reserve_keyword(m.group(i + 1))
-			msg = msg + ')"'
-			if 'color' in obj:
-				msg = msg + ',color="'+obj['color']+'"'
-			msg = msg + ']'
-			if 'ext-call' in obj:
-				msg = msg + '{' + obj['ext-call'] + ' [label="' +  obj['label'] + '(' + m.group(1) + ')"];}'
-			msg = msg + ';\n'
-			ret.append(msg)
+			if obj is not None :
+				msg = ''
+				if 'separator-line' in obj:
+					if obj['separator-line'] == 'before':
+						print obj['separator-line'], obj['label']
+						msg = msg + '=== Separator line ===\n'
+				msg = msg + obj['call'] + ' [label="' +  obj['label'] + '(' + m.group(1)
+				for i in range(2, len(m.groups())) :
+					if len(m.group(i + 1)) > 0:
+						msg = msg + ',' + excape_reserve_keyword(m.group(i + 1))
+				msg = msg + ')"'
+				if 'level' in obj:
+					msg = msg + ',color="'+get_color_from_log_level(obj['level'])+'"'
+				msg = msg + ']'
+				if 'ext-call' in obj:
+					msg = msg + '{' + obj['ext-call'] + ' [label="' +  obj['label'] + '(' + m.group(1) + ')"];}'
+				msg = msg + ';\n'
+				if 'separator-line' in obj:
+					if obj['separator-line'] == 'after':
+						print obj['separator-line'], obj['label']
+						msg = msg + '=== Separator line ===\n'
+				ret.append(msg)
 	f.close()
 	return ret
 
