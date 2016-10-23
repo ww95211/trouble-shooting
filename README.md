@@ -12,6 +12,7 @@ $ easy_install seqdiag
 
 # Defines
 ------------------
+```
 1. Events python file name :  ‘component-name’ + ‘_events.py’ , # tpgw_events.py, put this file under events folder
 2. Log format data object:
 	_format_data = {
@@ -47,3 +48,4 @@ $ easy_install seqdiag
 		}
 
 	}
+```
