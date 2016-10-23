@@ -16,7 +16,7 @@ $ easy_install seqdiag
 1. Events python file name :  ‘component-name’ + ‘_events.py’ , # tpgw_events.py, put this file under events folder
 2. Log format data object:
 	_format_data = {
-		‘multi-lines’ : false, # If this is true, we will use ‘start-with’ as separator 
+		‘multi-lines’ : false, # If this is true, we will use ‘start-with-pattern’ as separator 
 		‘filter-base’: ‘trackingId|confId’, # trackingId or confId , using confId by default
 		‘start-with-pattern’: ‘\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ’, # or None for default pattern
 		‘log-levels-pattern’: {
