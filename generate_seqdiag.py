@@ -198,7 +198,7 @@ class WbxCallflow:
 		self.m_locusId = locusId
 		if self.m_confId is None :
 			for i in os.listdir(CURDIR) :
-				if self.m_confId is None:
+				if self.m_confId is not None:
 					break
 				if os.path.isfile(os.path.join(CURDIR,i)):
 					if i.rfind('.log') == len(i) - 4:
@@ -235,12 +235,17 @@ class WbxCallflow:
 		self.generate_seqdiag()
 
 
-if len(sys.argv) < 2:
-        print "Usage: python ", sys.argv[0], " confid"
+if len(sys.argv) < 3:
+        print "Usage: python ", sys.argv[0], " -cid/lid confid"
         print "copy all the logs into current folder"
         quit()
 
 callflow = WbxCallflow()
-callflow.generate_seqdiag_for_all_via_confId(sys.argv[1])
+if sys.argv[1] == '-cid' :
+	callflow.generate_seqdiag_for_all_via_confId(sys.argv[2])
+elif sys.argv[1] == '-lid' :
+	callflow.generate_seqdiag_for_all_via_locusId(sys.argv[2])
+else :
+	print 'wrong parameters'
 
 
