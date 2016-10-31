@@ -168,7 +168,7 @@ class WbxCallflow:
 							mod = imp.load_source(modname, fpath)
 							print 'modname:'+modname+'.py'
 							self.filter_one_log_file(i,mod._format_data,mod._events_data)
-		fn_diag = 'callflow_' + self.m_confId+'-'+self.m_locusId+ '.diag'
+		fn_diag = 'callflow_' + self.m_confId + '.diag'
 		f_diag = open(fn_diag , 'w')
 		f_diag.write('{\n')
 		f_diag.write('edge_length = 300;\n')
@@ -236,7 +236,7 @@ class WbxCallflow:
 
 
 if len(sys.argv) < 3:
-        print "Usage: python ", sys.argv[0], " -cid/lid confid"
+        print "Usage: python ", sys.argv[0], " -cid/-lid confId/locudId"
         print "copy all the logs into current folder"
         quit()
 
