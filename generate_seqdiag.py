@@ -15,6 +15,7 @@ class WbxCallflow:
 	m_callflow_events = []
 	m_confId = None
 	m_locusId = None
+	m_trackingId = None
 
 	def __init__(self):
 		print 'WbxCallflow::__init__'
@@ -49,15 +50,19 @@ class WbxCallflow:
 		return value2
 
 	def filter_one_log_file(self, fn ,fmt, events):
-		if self.m_confId is None:
+		if self.m_confId is None and self.m_trackingId is None:
 			return
 		if 'start-with-pattern' not in fmt :
 			return
-		fil = '('+self.m_confId
-		if self.m_locusId is None:
-			fil = fil + ')'
+		fil = ''
+		if self.m_confId is not None:
+			fil = '('+self.m_confId
+			if self.m_locusId is None:
+				fil = fil + ')'
+			else :
+				fil = fil + '|' + self.m_locusId + ')'
 		else :
-			fil = fil + '|' + self.m_locusId + ')'
+			fil = '('+self.m_trackingId+')'
 		regs = r'^' + fmt['start-with-pattern'] + '.*$'
 		f=open(fn)
 		line_t = ''
@@ -67,7 +72,7 @@ class WbxCallflow:
 				r2=r'.*'+fil+'.*$'
 				m2 = re.match(r2,line_t)
 				if (m2 is not None):
-					self.collect_events(line, fmt, events)
+					self.collect_events(line_t, fmt, events)
 				line_t = line
 			else :
 				line_t = line_t + line.replace('\n','\\n').replace('\r','\\r').replace('   ','')
@@ -118,7 +123,6 @@ class WbxCallflow:
 					cmd =  e1
 					first = False
 		cmd = self.excape_reserve_keyword(cmd)
-
 		regs=r'^' + fmt['start-with-pattern']+'.*('+cmd+')(.*)$'
 		m=re.match(regs,line)
 		if (m is not None):
@@ -151,8 +155,8 @@ class WbxCallflow:
 				self.m_callflow_events.append({m.group(1):msg})
 
 	def generate_seqdiag(self) :
-		if self.m_confId is None:
-			print 'Error: confId cannot be None!'
+		if self.m_confId is None and self.m_trackingId is None:
+			print 'Error: confId or trackingId cannot be None!'
 			return
 		print 'generate the events ....'
 		CURDIR = os.path.dirname(os.path.realpath(__file__))
@@ -168,7 +172,11 @@ class WbxCallflow:
 							mod = imp.load_source(modname, fpath)
 							print 'modname:'+modname+'.py'
 							self.filter_one_log_file(i,mod._format_data,mod._events_data)
-		fn_diag = 'callflow_' + self.m_confId + '.diag'
+		fn_diag = ''
+		if self.m_confId is not None:
+			fn_diag = 'callflow_' + self.m_confId + '.diag'
+		else :
+			fn_diag = 'callflow_' + self.m_trackingId + '.diag'
 		f_diag = open(fn_diag , 'w')
 		f_diag.write('{\n')
 		f_diag.write('edge_length = 300;\n')
@@ -192,9 +200,15 @@ class WbxCallflow:
 		os.system(cmd)
 		print 'generate the sequence diagram done!'
 
+	def generate_seqdiag_for_all_via_trackingId(self,trackingId):
+		self.m_trackingId = trackingId
+		self.m_locusId = None
+		self.m_confId = None
+		self.generate_seqdiag()
 
 	def generate_seqdiag_for_all_via_locusId(self,locusId):
 		CURDIR = os.path.dirname(os.path.realpath(__file__))
+		self.m_trackingId = None
 		self.m_locusId = locusId
 		if self.m_confId is None :
 			for i in os.listdir(CURDIR) :
@@ -216,6 +230,7 @@ class WbxCallflow:
 
 	def generate_seqdiag_for_all_via_confId(self,confId):
 		CURDIR = os.path.dirname(os.path.realpath(__file__))
+		self.m_trackingId = None
 		self.m_confId = confId
 		if self.m_locusId is None :
 			for i in os.listdir(CURDIR):
@@ -236,7 +251,7 @@ class WbxCallflow:
 
 
 if len(sys.argv) < 3:
-        print "Usage: python ", sys.argv[0], " -cid/-lid confId/locudId"
+        print "Usage: python ", sys.argv[0], " -cid/-lid/tid confId/locudId/trackingId"
         print "copy all the logs into current folder"
         quit()
 
@@ -245,6 +260,8 @@ if sys.argv[1] == '-cid' :
 	callflow.generate_seqdiag_for_all_via_confId(sys.argv[2])
 elif sys.argv[1] == '-lid' :
 	callflow.generate_seqdiag_for_all_via_locusId(sys.argv[2])
+elif sys.argv[1] == '-tid' :
+	callflow.generate_seqdiag_for_all_via_trackingId(sys.argv[2])
 else :
 	print 'wrong parameters'
 

@@ -57,5 +57,10 @@ _events_data = {
 		'OnBFCPConnected,floor status:' : {'source':'TPGW','target':'TPGW','label':'BFCP connected'},
 		'GrabFloor,floor status' : {'source':'TPGW','target':'Linus','label':'Grab floor'},
 		'ReleaseFloor,floor status:' : {'source':'TPGW','target':'Linus','label':'Release floor'},
+	},
+	'CI-events' : {
+		'validate req_id' : {'source':'TPGW', 'target':'CI', 'label' : 'validate token'},
+		'getBearerToken req_id' : {'source':'TPGW', 'target':'CI', 'label' : 'get bear token'},
+		'GetResponseTrackingId' : {'source':'CI', 'target':'TPGW', 'label' : 'CI response'},
 	}
 }
