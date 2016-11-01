@@ -24,6 +24,7 @@ python generate_seqdiag.py -cid/-lid/-tid confId/locudId/trackingId
 1. Events python file name :  'component-name' + '_events.py' , # tpgw_events.py, put this file under events folder
 2. Log format data object:
 	_format_data = {
+		'module-name' : 'TPGW',
 		'start-with-pattern': '\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ',
         	'log-levels-pattern': {
                 	'info'    : ' Info:',
