@@ -12,7 +12,7 @@ $ easy_install seqdiag
 
 # How to use
 ------------------
-Put your module events python files under event folder, and 
+Put your module events python files under events folder(name as: component-name + '_events.py'), and 
 Copy all the logs into current folder and then running below command:
 ```
 python generate_seqdiag.py -cid/-lid/-tid confId/locudId/trackingId
