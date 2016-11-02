@@ -110,15 +110,10 @@ class WbxCallflow:
 			return obj[key]
 		return None
 
-	def is_unidirectional_only(self, fmt):
-		if fmt is None or 'unidirectional-only' not in fmt:
-			return False
-		return fmt['unidirectional-only']
-
-	def get_module_name(self,fmt):
-		if fmt is None or 'module-name' not in fmt:
-			return None
-		return fmt['module-name']
+	def get_sources_filter(self,fmt):
+		if fmt is None or 'sources-filter' not in fmt:
+			return []
+		return fmt['sources-filter']
 
 	def collect_events(self, line, fmt, events) :
 		if 'start-with-pattern' not in fmt :
@@ -140,7 +135,7 @@ class WbxCallflow:
 			if obj is not None :
 				source = self.get_keyvalue(line, 'source-pattern',obj, 'source', fmt)
 				target = self.get_keyvalue(line, 'target-pattern',obj, 'target', fmt)
-				if self.is_unidirectional_only(fmt) and self.get_module_name(fmt) != source :
+				if source not in self.get_sources_filter(fmt):
 					return
 				msg = ''
 				if 'separator-line' in obj:
