@@ -10,12 +10,21 @@ Or with easy_install:
 
 $ easy_install seqdiag
 
+# How to use
+------------------
+Put your module events python files under events folder(name as: component-name + '_events.py'), and 
+Copy all the logs into current folder and then running below command:
+```
+python generate_seqdiag.py -cid/-lid/-tid confId/locudId/trackingId
+```
+
 # Defines
 ------------------
 ```
 1. Events python file name :  'component-name' + '_events.py' , # tpgw_events.py, put this file under events folder
 2. Log format data object:
 	_format_data = {
+		'module-name' : 'TPGW',
 		'start-with-pattern': '\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ',
         	'log-levels-pattern': {
                 	'info'    : ' Info:',
