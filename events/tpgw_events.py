@@ -1,6 +1,8 @@
 __author__ = 'weifshen'
 
 _format_data = {
+	'unidirectional-only' : True, # will only show the events from this node to others
+	'module-name' : 'TPGW',
 	'start-with-pattern' : '\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ',
 	'log-levels-pattern': {
 		'info'    : ' Info:',
@@ -10,7 +12,7 @@ _format_data = {
 	},
 	'source-pattern': 'source:([^,]*)',
 	'target-pattern': 'target:([^,]*)',
-	'confId-locusId-map': {'pattern':'.*meeting_id=(.*)_.*locus\/api\/v1\/loci\/(.*).*$', 'confId-Idx':1, 'locusId-Idx':2}
+	'confId-locusId-map': {'pattern':'.*meeting_id=(.*)_.*locus\/api\/v(1|2|3)\/loci\/(.*).*$', 'confId-Idx':1, 'locusId-Idx':3},
 }
 
 _events_data = {

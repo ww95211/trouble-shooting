@@ -20,10 +20,10 @@ class WbxCallflow:
 	def __init__(self):
 		print 'WbxCallflow::__init__'
 
-	def get_id_from_map(self, fn, value1, idx1_key, idx2_key,fmt) :
-		if 'confId-locusId-map' not in fmt:
+	def get_id_from_map(self, fn, mapKey, value1, idx1_key, idx2_key,fmt) :
+		if mapKey not in fmt:
 			return None
-		mapping = fmt['confId-locusId-map']
+		mapping = fmt[mapKey]
 		if 'pattern' not in mapping:
 			return None
 		pattern = mapping['pattern']
@@ -45,8 +45,8 @@ class WbxCallflow:
 		f.close()
 		if value2 is not None:
 			print idx1_key+':'+value1 + ','+idx2_key +':' + value2 + ',from:'+fn
-		#else :
-			#print 'Not found'
+		else :
+			print 'Not found'
 		return value2
 
 	def filter_one_log_file(self, fn ,fmt, events):
@@ -57,12 +57,12 @@ class WbxCallflow:
 		fil = ''
 		if self.m_confId is not None:
 			fil = '('+self.m_confId
-			if self.m_locusId is None:
-				fil = fil + ')'
-			else :
-				fil = fil + '|' + self.m_locusId + ')'
+			if self.m_locusId is not None :
+				fil = fil + '|' + self.m_locusId
+			fil = fil + ')'
 		else :
 			fil = '('+self.m_trackingId+')'
+
 		regs = r'^' + fmt['start-with-pattern'] + '.*$'
 		f=open(fn)
 		line_t = ''
@@ -110,6 +110,16 @@ class WbxCallflow:
 			return obj[key]
 		return None
 
+	def is_unidirectional_only(self, fmt):
+		if fmt is None or 'unidirectional-only' not in fmt:
+			return False
+		return fmt['unidirectional-only']
+
+	def get_module_name(self,fmt):
+		if fmt is None or 'module-name' not in fmt:
+			return None
+		return fmt['module-name']
+
 	def collect_events(self, line, fmt, events) :
 		if 'start-with-pattern' not in fmt :
 			return
@@ -128,13 +138,14 @@ class WbxCallflow:
 		if (m is not None):
 			obj = self.find_event(events,m.group(2))
 			if obj is not None :
+				source = self.get_keyvalue(line, 'source-pattern',obj, 'source', fmt)
+				target = self.get_keyvalue(line, 'target-pattern',obj, 'target', fmt)
+				if self.is_unidirectional_only(fmt) and self.get_module_name(fmt) != source :
+					return
 				msg = ''
 				if 'separator-line' in obj:
 					if obj['separator-line'] == 'before':
 						msg = msg + '=== Separator line ===\n'
-				source = self.get_keyvalue(line, 'source-pattern',obj, 'source', fmt)
-				target = self.get_keyvalue(line, 'target-pattern',obj, 'target', fmt)
-
 				msg = msg + source + ' -> ' + target + ' [label="' +  obj['label'] + '(' + m.group(1)
 				for i in range(2, len(m.groups())) :
 					if len(m.group(i + 1)) > 0:
@@ -200,6 +211,26 @@ class WbxCallflow:
 		os.system(cmd)
 		print 'generate the sequence diagram done!'
 
+	def find_id(self, mapKey, v1, v1Idx,v2Idx):
+		CURDIR = os.path.dirname(os.path.realpath(__file__))
+		v2 = None
+		for i in os.listdir(CURDIR) :
+			if v2 is not None:
+				break
+			if os.path.isfile(os.path.join(CURDIR,i)):
+				if i.rfind('.log') == len(i) - 4:
+					print i
+					for importer, modname, ispkg in pkgutil.iter_modules([CURDIR + '/events']):
+						if ispkg:
+							continue
+						if modname.find('events') >= 0 :
+							fpath = os.path.join(CURDIR + '/events', modname) + '.py'
+							mod = imp.load_source(modname, fpath)
+							v2 = self.get_id_from_map(i,mapKey,v1, v1Idx ,v2Idx,mod._format_data )
+							if v2 is not None :
+								break
+		return v2
+
 	def generate_seqdiag_for_all_via_trackingId(self,trackingId):
 		self.m_trackingId = trackingId
 		self.m_locusId = None
@@ -210,43 +241,14 @@ class WbxCallflow:
 		CURDIR = os.path.dirname(os.path.realpath(__file__))
 		self.m_trackingId = None
 		self.m_locusId = locusId
-		if self.m_confId is None :
-			for i in os.listdir(CURDIR) :
-				if self.m_confId is not None:
-					break
-				if os.path.isfile(os.path.join(CURDIR,i)):
-					if i.rfind('.log') == len(i) - 4:
-						print i
-						for importer, modname, ispkg in pkgutil.iter_modules([CURDIR + '/events']):
-							if ispkg:
-								continue
-							if modname.find('events') >= 0 :
-								fpath = os.path.join(CURDIR + '/events', modname) + '.py'
-								mod = imp.load_source(modname, fpath)
-								self.m_confId = self.get_id_from_map(i,locusId, 'locusId-Idx' ,'confId-Idx',mod._format_data )
-								if self.m_confId is not None :
-									break
+		self.m_confId = self.find_id('confId-locusId-map',locusId,'locusId-Idx' ,'confId-Idx')
 		self.generate_seqdiag()
 
 	def generate_seqdiag_for_all_via_confId(self,confId):
 		CURDIR = os.path.dirname(os.path.realpath(__file__))
 		self.m_trackingId = None
 		self.m_confId = confId
-		if self.m_locusId is None :
-			for i in os.listdir(CURDIR):
-				if self.m_locusId is not None:
-					break
-				if os.path.isfile(os.path.join(CURDIR,i)):
-					if i.rfind('.log') == len(i) - 4:
-						for importer, modname, ispkg in pkgutil.iter_modules([CURDIR + '/events']):
-							if ispkg:
-								continue
-							if modname.find('events') >= 0 :
-								fpath = os.path.join(CURDIR + '/events', modname) + '.py'
-								mod = imp.load_source(modname, fpath)
-								self.m_locusId = self.get_id_from_map(i,confId, 'confId-Idx' ,'locusId-Idx',mod._format_data )
-								if self.m_locusId is not None :
-									break
+		self.m_locusId = self.find_id('confId-locusId-map',confId,'confId-Idx','locusId-Idx')
 		self.generate_seqdiag()
 
 
