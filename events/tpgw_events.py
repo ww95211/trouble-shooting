@@ -1,7 +1,7 @@
 __author__ = 'weifshen'
 
 _format_data = {
-	'unidirectional-only' : True, # will only show the events from this node to others
+	'unidirectional-only' : False, # will only show the events from this node to others
 	'module-name' : 'TPGW',
 	'start-with-pattern' : '\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ',
 	'log-levels-pattern': {
