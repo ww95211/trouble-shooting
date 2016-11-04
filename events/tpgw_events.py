@@ -1,8 +1,8 @@
 __author__ = 'weifshen'
 
 _format_data = {
-	#'sources-filter' : ['TPGW','CB','Hecate','Linus','WebEx-client'],
-	'sources-filter' : ['TPGW','Hecate','Linus'],
+	'sources-filter' : ['TPGW','CB','Hecate','Linus','WebEx-client'],
+	#'sources-filter' : ['TPGW','Hecate','Linus'],
 	'start-with-pattern' : '\[(\d+[/]\d+[/]\d+ \d+[:]\d+[:]\d+[.]\d+) ',
 	'log-levels-pattern': {
 		'info'    : ' Info:',

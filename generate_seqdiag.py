@@ -147,12 +147,12 @@ class WbxCallflow:
 						msg = msg + ',' + self.excape_reserve_keyword(m.group(i + 1))
 				clr = 'color="'+ self.get_color_from_log_level(line, fmt)+'"'
 				msg = msg + ')",'+clr+']'
-				if 'farward' in obj or 'return' in obj:
+				if 'forward' in obj or 'return' in obj:
 					msg = msg + '{'
 					if 'return' in obj and obj['return'] == True:
 						msg = msg + target + ' -> ' + source + ' [label="RET:' +  obj['label'] + '(' + m.group(1) + ')",'+clr+'];'
-					if 'farward' in obj:
-						msg = msg + target + ' -> ' + obj['farward'] +' [label="FWD:' + obj['label'] + '(' + m.group(1) + ')",'+clr+'];'
+					if 'forward' in obj:
+						msg = msg + target + ' -> ' + obj['forward'] +' [label="FWD:' + obj['label'] + '(' + m.group(1) + ')",'+clr+'];'
 					msg = msg + '}'
 				msg = msg + ';\n'
 				if 'separator-line' in obj:
